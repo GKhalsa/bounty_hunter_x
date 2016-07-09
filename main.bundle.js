@@ -100,7 +100,7 @@
 	}
 
 	function checkMissileLocation() {
-	  missileArray = missileArray.filter(function (missile) {
+	  missileArray = keyController.missileArray.filter(function (missile) {
 	    return missile.x > 0 && missile.x < canvasWidth && missile.y > 0 && missile.y < canvasHeight;
 	  });
 	}
