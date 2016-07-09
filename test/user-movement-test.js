@@ -1,4 +1,3 @@
-const chai          = require('chai').assert;
 const GameBoard     = require('../lib/gameBoard.js');
 const KeyController = require('../lib/keyController.js');
 var canvas = document.getElementById("myCanvas");
