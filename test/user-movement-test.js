@@ -18,27 +18,27 @@ describe('GameBoard', function() {
 
     it('can move player to the left', function(){
       keyController.leftPressed = true;
-      keyController.leftRightMovement();
+      keyController.userMovement();
       expect(gameBoard.shipX).to.equal(280);
     });
 
     it('can move player to the right', function(){
       keyController.leftPressed  = false;
       keyController.rightPressed = true;
-      keyController.leftRightMovement();
+      keyController.userMovement();
       expect(gameBoard.shipX).to.equal(290);
     });
 
     it('can move player up', function(){
       keyController.upPressed = true;
-      keyController.leftRightMovement();
+      keyController.userMovement();
       expect(gameBoard.shipY).to.equal(750);
     });
     //
     it('can move player down', function(){
       keyController.upPressed = false;
       keyController.downPressed = true;
-      keyController.leftRightMovement();
+      keyController.userMovement();
       expect(gameBoard.shipY).to.equal(760);
     });
   });
