@@ -12,21 +12,21 @@ describe('GameBoard', function() {
     var keyController = new KeyController(ctx, canvas, gameBoard);
 
     it('shows new player location', function(){
-      expect(gameBoard.shipX).to.equal(290);
+      expect(gameBoard.shipX).to.equal(285);
       expect(gameBoard.shipY).to.equal(760);
     });
 
     it('can move player to the left', function(){
       keyController.leftPressed = true;
       keyController.userMovement();
-      expect(gameBoard.shipX).to.equal(280);
+      expect(gameBoard.shipX).to.equal(275);
     });
 
     it('can move player to the right', function(){
       keyController.leftPressed  = false;
       keyController.rightPressed = true;
       keyController.userMovement();
-      expect(gameBoard.shipX).to.equal(290);
+      expect(gameBoard.shipX).to.equal(285);
     });
 
     it('can move player up', function(){
