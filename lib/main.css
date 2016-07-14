@@ -39,3 +39,8 @@ body, html {
 .text-center {
   margin-top: 15px;
 }
+
+@font-face {
+  font-family: 'MyWebFont';
+  src: url('../assets/fonts/gunslinger.ttf');
+}
