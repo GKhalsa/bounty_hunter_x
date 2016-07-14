@@ -11,7 +11,7 @@ img {
 }
 
   body {
-    background-image: url('../cyber_interface.jpg');
+    background-image: url('../assets/background-images/cyber_interface.jpg');
     background-size: contain;
     background-position: center;
   }
