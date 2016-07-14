@@ -90,7 +90,7 @@
 	  switch (e.keyCode) {
 	    case 32:
 	      this.gameBoard.launchNewMissile();
-	      var mySound = new Sound("../assets/sounds/shoot.wav", 0.1);
+	      var mySound = new Sound("assets/sounds/shoot.wav", 0.1);
 	      mySound.play();
 	      break;
 
@@ -116,7 +116,7 @@
 	  switch (e.keyCode) {
 	    case 13:
 	      this.gameBoard.startGame = true;
-	      var mySound = new Sound("../assets/sounds/bebop-theme.mp3", 0.4);
+	      var mySound = new Sound("assets/sounds/bebop-theme.mp3", 0.4);
 	      mySound.play();
 
 	      break;
@@ -207,19 +207,23 @@
 
 	UserShipImages.prototype.centerPlaneImage = function (shipX, shipY) {
 	  var plane = new Image();
+<<<<<<< HEAD
+	  plane.src = 'assets/user-images/redfighter-straight.png';
+=======
 	  plane.src = '../assets/user-images/redfighter-straight.png';
+>>>>>>> master
 	  this.ctx.drawImage(plane, shipX - 5, shipY - 5, 40, 40);
 	};
 
 	UserShipImages.prototype.leftPlaneImage = function (shipX, shipY) {
 	  var plane = new Image();
-	  plane.src = '../assets/user-images/redfighter-left.png';
+	  plane.src = 'assets/user-images/redfighter-left.png';
 	  this.ctx.drawImage(plane, shipX - 10, shipY, 40, 40);
 	};
 
 	UserShipImages.prototype.rightPlaneImage = function (shipX, shipY) {
 	  var plane = new Image();
-	  plane.src = '../assets/user-images/redfighter-right.png';
+	  plane.src = 'assets/user-images/redfighter-right.png';
 	  this.ctx.drawImage(plane, shipX - 10, shipY, 40, 40);
 	};
 
@@ -576,7 +580,7 @@
 	      movement: { x: 7, y: 20 },
 	      size: { width: 30, height: 50 },
 	      health: 10,
-	      image: { sprite: '../assets/enemy-images/alien-diagonal-right.png' },
+	      image: { sprite: 'assets/enemy-images/alien-diagonal-right.png' },
 	      missileOffset: { x: 0, y: 0 }
 	    }, {
 	      x: this.randomNum(this.canvasWidth, this.canvasWidth + 50),
@@ -584,7 +588,7 @@
 	      movement: { x: -20, y: 2 },
 	      size: { width: 30, height: 50 },
 	      health: 10,
-	      image: { sprite: '../assets/enemy-images/alien-left.png' },
+	      image: { sprite: 'assets/enemy-images/alien-left.png' },
 	      missileOffset: { x: 0, y: 0 }
 	    }, {
 	      x: this.randomNum(0, this.canvasWidth),
@@ -592,7 +596,7 @@
 	      movement: { x: 0, y: 30 },
 	      size: { width: 30, height: 50 },
 	      health: 10,
-	      image: { sprite: '../assets/enemy-images/alien-spaceship.png' },
+	      image: { sprite: 'assets/enemy-images/alien-spaceship.png' },
 	      missileOffset: { x: 0, y: 0 }
 	    }];
 
@@ -610,7 +614,7 @@
 	      movement: { x: 0, y: 15 },
 	      size: { width: 200, height: 200, offset: 5 },
 	      health: 80,
-	      image: { width: 200, height: 200, sprite: '../assets/enemy-images/level_2_big_enemy.png' },
+	      image: { width: 200, height: 200, sprite: 'assets/enemy-images/level_2_big_enemy.png' },
 	      missileOffset: { x: 85, y: 30 }
 	    }];
 
@@ -628,7 +632,7 @@
 	      movement: { x: 10, y: 0 },
 	      size: { width: 200, height: 200, offset: -40 },
 	      health: 200,
-	      image: { width: 300, height: 300, sprite: '../assets/enemy-images/finalSpinningBoss.png' },
+	      image: { width: 300, height: 300, sprite: 'assets/enemy-images/finalSpinningBoss.png' },
 	      missileOffset: { x: 85, y: 120 }
 	    }];
 
@@ -848,7 +852,7 @@
 
 	PowerUp.prototype.draw = function () {
 	  var orb = new Image();
-	  orb.src = "../assets/background-images/powerUp.png";
+	  orb.src = "assets/background-images/powerUp.png";
 	  this.ctx.drawImage(orb, this.x, this.y, 20, 20);
 	  return this;
 	};
@@ -879,7 +883,7 @@
 
 	AiBuddy.prototype.drawPlane = function () {
 	  var plane = new Image();
-	  plane.src = '../assets/user-images/redfighter-straight.png';
+	  plane.src = 'assets/user-images/redfighter-straight.png';
 	  this.ctx.drawImage(plane, this.x - 5, this.y - 5, 40, 40);
 	  return this;
 	};
