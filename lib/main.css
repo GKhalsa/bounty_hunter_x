@@ -10,12 +10,30 @@ img {
   display: none;
 }
 
-  body {
-    background-image: url('../assets/background-images/cyber_interface.jpg');
-    background-size: contain;
-    background-position: center;
-  }
+body {
+  background-image: url('../assets/background-images/cyber_interface.jpg');
+  background-size: contain;
+  background-position: center;
+}
 
-#scoreboard {
+body, html {
+    overflow-x: hidden;
+    overflow-y: hidden;
+}
 
+#instructions {
+  color:orange;
+  margin-top: 100px;
+  font-size: 20px;
+  font-family: 'Press Start 2P', sans-serif;
+  background-color: rgba(0, 0, 0, 0.5);
+  margin-right: 600px;
+}
+
+#text-body{
+  margin-top: 200px;
+}
+
+.text-center {
+  margin-top: 15px;
 }
