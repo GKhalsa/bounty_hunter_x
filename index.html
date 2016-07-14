@@ -4,11 +4,37 @@
   <meta charset="utf-8">
   <title>Game Time</title>
   <link href="lib/main.css" type="text/css" rel="stylesheet" />
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
   <link href='https://fonts.googleapis.com/css?family=Press+Start+2P' rel='stylesheet' type='text/css'>
 </head>
 <body>
+  <div class="row">
 
-  <canvas id="myCanvas" width="800" height="800"></canvas>
+    <div class="col-lg-8">
+      <canvas id="myCanvas" width="800" height="800"></canvas>
+    </div>
+
+    <div class="col-lg-4" id='text-body'>
+      <div class='right' id="instructions">
+        <div class="row text-center">
+          Instructions
+        </div>
+        <div class="row text-center">
+          Arrow Keys to Move
+        </div>
+        <div class="row text-center">
+          Spacebar to shoot
+        </div>
+        <div class="row text-center">
+          Collect orbs to power-up!
+        </div>
+        <div class="row text-center">
+          Thank you for playing!
+        </div>
+      </div>
+    </div>
+  </div>
+
 
   <script src="main.bundle.js"></script>
 </body>
