@@ -1,7 +1,21 @@
 #myCanvas{
   background-color: darkblue;
   margin: 5% 30%;
+  border-radius: 15px;
+  /*-moz-box-shadow:    3px 3px 5px 6px #ccc;*/
+  /*-webkit-box-shadow: 3px 3px 5px 6px #ccc;*/
+  box-shadow:         2px 3px 12px 8px #ccc ;
 }
 img {
   display: none;
+}
+
+  body {
+    background-image: url('../assets/background-images/cyber_interface.jpg');
+    background-size: contain;
+    background-position: center;
+  }
+
+#scoreboard {
+
 }

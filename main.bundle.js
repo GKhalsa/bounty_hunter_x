@@ -49,186 +49,42 @@
 	var canvas = document.getElementById("myCanvas");
 	var ctx = canvas.getContext("2d");
 
-	var EnemyPlane = __webpack_require__(1);
+	var KeyController = __webpack_require__(1);
+	var GameBoard = __webpack_require__(3);
+	var CollisionDetection = __webpack_require__(9);
+	var MainGameLoop = __webpack_require__(12);
 
-	var canvasWidth = canvas.width;
-	var canvasHeight = canvas.height;
-	var shipWidth = 20;
-	var shipHeight = 20;
-	var shipX = (canvas.width - shipWidth) / 2;
-	var shipY = canvasHeight - 40;
-	var rightPressed = false;
-	var leftPressed = false;
-	var upPressed = false;
-	var downPressed = false;
-	var missileArray = [];
-	var enemyPlane = [new EnemyPlane(200, 100, 50, 50, ctx, canvas)];
-	var enemyMissileArray = [];
+	// const Explosion          = require('./explosion.js');
 
-	function drawShip() {
-	  ctx.beginPath();
-	  ctx.rect(shipX, shipY, shipWidth, shipHeight);
-	  ctx.fillStyle = "white";
-	  ctx.fill();
-	  ctx.closePath();
-	}
+	var gameBoard = new GameBoard(canvas, ctx);
+	var keyController = new KeyController(ctx, canvas, gameBoard);
+	var collisionDetection = new CollisionDetection(gameBoard);
+	var mainGameLoop = new MainGameLoop(gameBoard, canvas, ctx, keyController, collisionDetection);
+	// var explosion         = new Explosion(gameBoard);
 
-	document.addEventListener("keydown", keyDownHandler, false);
-	document.addEventListener("keyup", keyUpHandler, false);
+	// var animationFrame = 1;
+	// var hit = true;
+	// var currentFrame = 1;
 
-	function keyDownHandler(e) {
-	  if (e.keyCode === 39) {
-	    rightPressed = true;
-	  } else if (e.keyCode === 37) {
-	    leftPressed = true;
-	  } else if (e.keyCode === 38) {
-	    upPressed = true;
-	  } else if (e.keyCode === 40) {
-	    downPressed = true;
-	  }
-	  if (e.keyCode === 32) {
-	    missileArray.push(new Missile(shipX, shipY, 5, 5));
-	  }
-	}
-
-	function Missile(x, y, width, height) {
-	  this.x = x + 4;
-	  this.y = y;
-	  this.width = width;
-	  this.height = height;
-	  this.color = "red";
-	}
-
-	function checkMissileLocation() {
-	  missileArray = keyController.missileArray.filter(function (missile) {
-	    return missile.x > 0 && missile.x < canvasWidth && missile.y > 0 && missile.y < canvasHeight;
-	  });
-	}
-
-	Missile.prototype.drawMissile = function () {
-	  ctx.fillStyle = this.color;
-	  ctx.fillRect(this.x, this.y, this.width, this.height);
-	  return this;
-	};
-
-	Missile.prototype.launch = function () {
-	  this.y -= 20;
-	  return this;
-	};
-
-	// function EnemyMissile(x, y, width, height){
-	//   this.x = x + 4;
-	//   this.y = y + 10;
-	//   this.width = width;
-	//   this.height = height;
-	//   this.color = "red";
-	// }
-	//
-	//
-	//
-	// EnemyMissile.prototype.drawMissile = function(){
-	//   ctx.fillStyle = this.color;
-	//   ctx.fillRect(this.x, this.y, this.width, this.height);
-	//   return this;
-	// };
-	//
-	// EnemyMissile.prototype.launch = function(){
-	//   this.y += 5;
-	//   return this;
-	// };
-
-	function keyUpHandler(e) {
-	  if (e.keyCode === 39) {
-	    rightPressed = false;
-	  } else if (e.keyCode === 37) {
-	    leftPressed = false;
-	  } else if (e.keyCode === 38) {
-	    upPressed = false;
-	  } else if (e.keyCode === 40) {
-	    downPressed = false;
-	  }
-	}
-
-	function enemyCollisionDetection() {
-	  enemyPlane.forEach(function (plane) {
-	    missileArray.forEach(function (missile) {
-	      if (missile.x > plane.x && missile.x < plane.x + plane.width && missile.y > plane.y && missile.y < plane.y + plane.height) {
-	        enemyPlane.pop(plane);
-	      }
-	    });
-	  });
-	}
-
-	function userCollisionDetection() {
-	  enemyMissileArray.forEach(function (missile) {
-	    if (missile.x > shipX && missile.x < shipX + shipWidth && missile.y > shipY && missile.y < shipY + shipHeight) {
-	      console.log('TL');
-	    }
-	    if (missile.x + 5 > shipX && missile.x + 5 < shipX + shipWidth && missile.y > shipY && missile.y < shipY + shipHeight) {
-	      console.log('TR');
-	    }
-	    if (missile.x > shipX && missile.x < shipX + shipWidth && missile.y + 5 > shipY && missile.y + 5 < shipY + shipHeight) {
-	      console.log('BL');
-	    }
-	    if (missile.x + 5 > shipX && missile.x + 5 < shipX + shipWidth && missile.y + 5 > shipY && missile.y + 5 < shipY + shipHeight) {
-	      console.log('BR');
-	    }
-
-	    //x > shipX && x < shipX + shipWidth && y > shipY && y < shipY + shipHeight
-
-	    // [missile.x, missile.y]
-	    // [missile.x + missileWidth, missile.y]
-	    // [missile.x, missile.y missileHeight]
-	    // [missile.x + missileWidth, missile.y + missileHeight]
-
-	    // [missile.x, missile.x, missile.y, missile.y]
-	    // [missile.x + missileWidth, missile.x + missileWidth, missile.y, missile.y]
-	    // [missle.x, missle.x, missle.y + missileHeight, missle.y + missileHeight]
-	    // [missle.x + missileWidth, missle.x + missileWidth, missle.y + missileHeight, missle.y + missileHeight]
-	  });
-	}
-
-	function leftRightMovement() {
-	  if (leftPressed && shipX > 0) {
-	    shipX -= 10;
-	  }
-	  if (rightPressed && shipX < canvasWidth - shipWidth) {
-	    shipX += 10;
-	  }
-	  if (upPressed && shipY > 0) {
-	    shipY -= 10;
-	  }
-	  if (downPressed && shipY < canvasHeight - shipHeight) {
-	    shipY += 10;
-	  }
-	}
+	document.addEventListener("keydown", keyController.keyDownHandler.bind(keyController), false);
+	document.addEventListener("keyup", keyController.keyUpHandler.bind(keyController), false);
 
 	function draw() {
-	  ctx.clearRect(0, 0, canvas.width, canvas.height);
+	  mainGameLoop.loop();
 
-	  drawShip();
-
-	  enemyMissileArray.forEach(function (missile) {
-	    missile.drawMissile().launch();
-	  });
-
-	  enemyPlane.forEach(function (plane) {
-	    plane.drawPlane().movement();
-	    var missile = plane.launchMissile();
-	    // if ( missile !== undefined){
-	    if (Math.random() > 0.895) {
-	      enemyMissileArray.push(missile);
-	    }
-	  });
-
-	  checkMissileLocation();
-	  missileArray.forEach(function (missile) {
-	    missile.drawMissile().launch();
-	  });
-
-	  userCollisionDetection();
-	  enemyCollisionDetection();
-	  leftRightMovement();
+	  // if (hit === true && (currentFrame % 100 === 0)){
+	  //   explosion.explosionSequence(animationFrame);
+	  //    animationFrame++;
+	  //    if(animationFrame === 22){
+	  //      animationFrame = 1;
+	  //    }
+	  // } else {
+	  //    currentFrame++;
+	  //    explosion.explosionSequence(animationFrame);
+	  //    if(animationFrame === 22){
+	  //      animationFrame = 1;
+	  //    }
+	  // }
 	  requestAnimationFrame(draw);
 	}
 
@@ -238,36 +94,430 @@
 /* 1 */
 /***/ function(module, exports, __webpack_require__) {
 
+	'use strict';
+
+	var UserShipImages = __webpack_require__(2);
+
+	function KeyController(ctx, canvas, gameBoard) {
+	  this.gameBoard = gameBoard;
+	  this.rightPressed = false;
+	  this.leftPressed = false;
+	  this.upPressed = false;
+	  this.downPressed = false;
+	  this.ctx = ctx;
+	  this.canvasWidth = canvas.width;
+	  this.canvasHeight = canvas.height;
+	  this.shipWidth = 20;
+	  this.shipHeight = 20;
+	}
+
+	KeyController.prototype.keyDownHandler = function (e) {
+	  this.shipControls(e);
+	  this.menuOptions(e);
+	};
+
+	KeyController.prototype.shipControls = function (e) {
+	  switch (e.keyCode) {
+	    case 32:
+	      this.gameBoard.launchNewMissile();
+	      break;
+
+	    case 37:
+	      this.leftPressed = true;
+	      break;
+
+	    case 38:
+	      this.upPressed = true;
+	      break;
+
+	    case 39:
+	      this.rightPressed = true;
+	      break;
+
+	    case 40:
+	      this.downPressed = true;
+	      break;
+	  }
+	};
+
+	KeyController.prototype.menuOptions = function (e) {
+	  switch (e.keyCode) {
+	    case 13:
+	      this.gameBoard.startGame = true;
+	      break;
+
+	    case 80:
+	      if (this.gameBoard.endGame) {
+	        location.reload();
+	      }
+	      break;
+	  }
+	};
+
+	KeyController.prototype.keyUpHandler = function (e) {
+	  switch (e.keyCode) {
+	    case 37:
+	      this.leftPressed = false;
+	      break;
+
+	    case 38:
+	      this.upPressed = false;
+	      break;
+
+	    case 39:
+	      this.rightPressed = false;
+	      break;
+
+	    case 40:
+	      this.downPressed = false;
+	      break;
+	  }
+	};
+
+	KeyController.prototype.leftMovement = function () {
+	  if (this.leftPressed && this.gameBoard.shipX <= 10) {
+	    this.gameBoard.shipX = this.canvasWidth;
+	  }
+	  if (this.leftPressed && this.gameBoard.shipX > 0) {
+	    this.gameBoard.shipX -= 10;
+	  }
+	};
+
+	KeyController.prototype.rightMovement = function () {
+	  if (this.rightPressed && this.gameBoard.shipX >= this.canvasWidth - this.shipWidth) {
+	    this.gameBoard.shipX = -10;
+	  }
+	  if (this.rightPressed && this.gameBoard.shipX < this.canvasWidth - this.shipWidth) {
+	    this.gameBoard.shipX += 10;
+	  }
+	};
+
+	KeyController.prototype.upDownMovement = function () {
+	  if (this.upPressed && this.gameBoard.shipY > 0) {
+	    this.gameBoard.shipY -= 10;
+	  }
+	  if (this.downPressed && this.gameBoard.shipY < this.canvasHeight - (this.shipHeight + 10)) {
+	    this.gameBoard.shipY += 10;
+	  }
+	};
+
+	KeyController.prototype.userMovement = function () {
+	  this.leftMovement();
+	  this.rightMovement();
+	  this.upDownMovement();
+	};
+
+	KeyController.prototype.userShipPosition = function () {
+	  var userShipImages = new UserShipImages(this.ctx);
+	  if (this.leftPressed) {
+	    userShipImages.leftPlaneImage(this.gameBoard.shipX, this.gameBoard.shipY);
+	  } else if (this.rightPressed) {
+	    userShipImages.rightPlaneImage(this.gameBoard.shipX, this.gameBoard.shipY);
+	  } else {
+	    userShipImages.centerPlaneImage(this.gameBoard.shipX, this.gameBoard.shipY);
+	  }
+	};
+
+	module.exports = KeyController;
+
+/***/ },
+/* 2 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	function UserShipImages(ctx) {
+	  this.ctx = ctx;
+	}
+
+	UserShipImages.prototype.centerPlaneImage = function (shipX, shipY) {
+	  var plane = new Image();
+	  plane.src = './redfighter-straight.png';
+	  this.ctx.drawImage(plane, shipX - 5, shipY - 5, 40, 40);
+	};
+
+	UserShipImages.prototype.leftPlaneImage = function (shipX, shipY) {
+	  var plane = new Image();
+	  plane.src = './redfighter-left.png';
+	  this.ctx.drawImage(plane, shipX - 10, shipY, 40, 40);
+	};
+
+	UserShipImages.prototype.rightPlaneImage = function (shipX, shipY) {
+	  var plane = new Image();
+	  plane.src = './redfighter-right.png';
+	  this.ctx.drawImage(plane, shipX - 10, shipY, 40, 40);
+	};
+
+	module.exports = UserShipImages;
+
+/***/ },
+/* 3 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var EnemyPlane = __webpack_require__(4);
+	var UserMissile = __webpack_require__(6);
+	var GameBoardMissileHelpers = __webpack_require__(7);
+	var GameBoardScreenTextHelper = __webpack_require__(8);
+
+	function GameBoard(canvas, ctx) {
+	  this.startGame = false;
+	  this.endGame = false;
+	  this.ctx = ctx;
+	  this.enemyPlanes = [];
+	  this.enemyMissiles = [];
+	  this.userMissiles = [];
+	  this.level = 1;
+	  this.canvas = canvas;
+	  this.canvasWidth = canvas.width;
+	  this.canvasHeight = canvas.height;
+	  this.userPlaneWidth = 30;
+	  this.userPlaneHeight = 30;
+	  this.money = 10;
+	  this.score = 0;
+	  this.shipX = (this.canvasWidth - this.userPlaneWidth) / 2;
+	  this.shipY = this.canvasHeight - 40;
+	  this.frameCount = 0;
+	  this.levelStart = false;
+	  this.powerUps = [];
+	  this.playerPower = 1;
+	  this.missileHelpers = new GameBoardMissileHelpers(this.userMissiles, this.enemyMissiles, this.shipX, this.shipY, this.canvasWidth, this.canvasHeight);
+	  this.textHelpers = new GameBoardScreenTextHelper(this.ctx, this.canvasWidth);
+	}
+
+	GameBoard.prototype.launchNewMissile = function () {
+	  this.userMissiles.push(new UserMissile(this.shipX, this.shipY, 5, 5, this.ctx));
+	  if (this.playerPower > 1) {
+	    this.userMissiles.push(new UserMissile(this.shipX + 16, this.shipY, 5, 5, this.ctx));
+	  }
+	};
+
+	GameBoard.prototype.powerUpDrop = function () {
+	  this.powerUps.forEach(function (powerUp) {
+	    powerUp.draw().moveDown();
+	  });
+	};
+
+	GameBoard.prototype.clearRedeemedPowerUp = function () {
+	  this.powerUps = this.powerUps.filter((function (powerUp) {
+	    return powerUp.redeemed === false && powerUp.y < this.canvasHeight;
+	  }).bind(this));
+	};
+
+	GameBoard.prototype.checkUserMissileLocations = function () {
+	  this.userMissiles = this.userMissiles.filter((function (missile) {
+	    return missile.y > 0;
+	  }).bind(this));
+	};
+
+	GameBoard.prototype.checkEnemyMissileLocations = function () {
+	  this.enemyMissiles = this.enemyMissiles.filter((function (missile) {
+	    return missile.y < this.canvasHeight;
+	  }).bind(this));
+	};
+
+	GameBoard.prototype.checkForRound = function (startRound, endRound, levelNum) {
+	  if (this.frameCount === startRound) {
+	    this.level = levelNum;
+	    if (this.level === 3) {
+	      this.levelStart = false;
+	    }
+	  }
+	  if (this.level === levelNum && this.levelStart === false) {
+	    this.textHelpers.levelScreen(levelNum.toString());
+	    this.enemyPlanes = [];
+	  }
+
+	  if (this.frameCount === endRound) {
+	    this.levelStart = true;
+	  }
+	};
+
+	GameBoard.prototype.renderEnemyPlanes = function () {
+	  this.frameCount++;
+
+	  if (this.frameCount % 100 === 0) {
+	    this.generateEnemyPlanes();
+	  } // or render new planes with time
+	  this.enemyPlanes.forEach((function (plane) {
+	    plane.drawPlane().movement();
+	    var missile = plane.launchMissile();
+	    if (Math.random() > 0.98) {
+	      this.enemyMissiles.push(missile);
+	    }
+	  }).bind(this));
+	};
+
+	GameBoard.prototype.generateEnemyPlanes = function () {
+	  for (var i = 0; i < this.level * 5; i++) {
+	    var patterns = [{
+	      x: -this.randomNum(1, 200),
+	      y: -this.randomNum(15, 30),
+	      movement: { x: 7, y: 20 },
+	      size: { width: 30, height: 50 },
+	      health: 10,
+	      image: { sprite: './alien-diagonal-right.png' }
+
+	    }, {
+	      x: this.randomNum(this.canvasWidth, this.canvasWidth + 50),
+	      y: this.randomNum(1, 100),
+	      movement: { x: -20, y: 2 },
+	      size: { width: 30, height: 50 },
+	      health: 10,
+	      image: { sprite: './alien-left.png' }
+
+	    }, {
+	      x: this.randomNum(0, this.canvasWidth),
+	      y: -this.randomNum(7, 20),
+	      movement: { x: 0, y: 30 },
+	      size: { width: 30, height: 50 },
+	      health: 10,
+	      image: { sprite: './alien-spaceship.png' }
+
+	    }];
+
+	    var enemies = patterns[this.randomNum(0, 3)];
+	    this.enemyPlanes.push(this.newEnemyPlane(enemies.x, enemies.y, enemies.movement, enemies.size, enemies.health, enemies.image));
+	  }
+	};
+
+	// GameBoard.prototype.generateEnemyPlanes = function(){
+	//   for(let i = 0; i< (this.level * 5) ;i++){
+	//     let patterns = [{
+	//       x: -(this.randomNum(1, 200)),
+	//       y: -(this.randomNum(15, 30)),
+	//       movement: {x:7, y:20},
+	//       size:{width:30, height:50},
+	//       health: 10,
+	//       image:{sprite: './alienspaceship-diagonal-right.png'}
+	//
+	//     },
+	//     {
+	//       x:  (this.randomNum(100,500)),
+	//       y: -(this.randomNum(200, 201)),
+	//       movement: {x:0, y:4 },
+	//       size:{width: 200, height: 200},
+	//       health: 30,
+	//       image: {width: 200, height: 200, sprite: './level_2_big_enemy.png'}
+	//
+	//     },
+	//     {
+	//       x: (this.randomNum(0, this.canvasWidth)),
+	//       y: -(this.randomNum(7, 20)),
+	//       movement: {x:0, y:30},
+	//       size:{width:30, height:50},
+	//       health:10,
+	//       image: {sprite: './alienspaceship.png'}
+	//
+	//
+	//     }];
+	//
+	//     // let enemies = patterns[this.randomNum(0,3)];
+	//     let enemies = patterns[1];
+	//     this.enemyPlanes.push(this.newEnemyPlane(enemies.x, enemies.y, enemies.movement, enemies.size, enemies.health, enemies.image));
+	//   }
+	// };
+
+	// GameBoard.prototype.generateEnemyPlanes = function(){
+	//   let patterns = [{
+	//     x: (this.randomNum(300, 300)),
+	//     y: (this.randomNum(100, 100)),
+	//     movement: {x:0, y:0},
+	//     size:{width:200, height:200},
+	//     health: 300,
+	//     image:{width: 300, height: 300, sprite:'./finalSpinningBoss.png'}
+	//
+	//   },
+	//   ];
+	//
+	//   let enemies = patterns[0];
+	//   this.enemyPlanes.push(this.newEnemyPlane(enemies.x, enemies.y, enemies.movement, enemies.size, enemies.health, enemies.image));
+	//
+	// };
+
+	GameBoard.prototype.randomNum = function (firstNum, secondNum) {
+	  return Math.floor(Math.random() * secondNum) + firstNum;
+	};
+
+	GameBoard.prototype.newEnemyPlane = function (x, y, movement, size, health, image) {
+	  return new EnemyPlane(x, y, size.width, size.height, this.ctx, this.canvas, movement, health, image);
+	};
+
+	GameBoard.prototype.checkEnemyPlaneLocations = function () {
+	  this.enemyPlanes = this.enemyPlanes.filter((function (plane) {
+	    return plane.y < this.canvasHeight && plane.x > -300;
+	  }).bind(this));
+	};
+
+	GameBoard.prototype.clearDestroyedPlanes = function () {
+	  this.enemyPlanes = this.enemyPlanes.filter(function (plane) {
+	    return plane.health > 0;
+	  });
+	};
+
+	GameBoard.prototype.drawShip = function () {
+	  this.ctx.beginPath();
+	  this.ctx.rect(this.shipX, this.shipY, this.userPlaneWidth, this.userPlaneHeight);
+	  this.ctx.fillStyle = "white";
+	  this.ctx.fill();
+	  this.ctx.closePath();
+	};
+
+	GameBoard.prototype.setup = function () {
+	  this.checkForRound(300, 600, 2);
+	  this.checkForRound(800, 1000, 3);
+	  this.textHelpers.drawScore(this.score);
+	  this.powerUpDrop();
+	  this.missileHelpers.renderEnemyMissiles(this.enemyMissiles);
+	  this.renderEnemyPlanes();
+	  this.checkUserMissileLocations();
+	  this.checkEnemyMissileLocations();
+	  this.missileHelpers.renderUserMissiles(this.userMissiles);
+	  this.checkEnemyPlaneLocations();
+	};
+
+	module.exports = GameBoard;
+
+/***/ },
+/* 4 */
+/***/ function(module, exports, __webpack_require__) {
+
 	"use strict";
 
-	var EnemyMissile = __webpack_require__(2);
+	var EnemyMissile = __webpack_require__(5);
 
-	var move = 5;
-
-	function EnemyPlane(x, y, width, height, ctx, canvas) {
+	function EnemyPlane(x, y, width, height, ctx, canvas, movement, health, image) {
 	  this.x = x;
 	  this.y = y;
 	  this.width = width;
 	  this.height = height;
 	  this.ctx = ctx;
 	  this.canvasWidth = canvas.width;
+	  this.health = health;
+	  this.movementX = movement.x;
+	  this.movementY = movement.y;
+	  this.sprite = image.sprite;
+	  this.imageWidth = image.width || 50;
+	  this.imageHeight = image.height || 50;
 	}
 
 	EnemyPlane.prototype.drawPlane = function () {
-	  this.ctx.beginPath();
-	  this.ctx.rect(this.x, this.y, this.width, this.height);
-	  this.ctx.fillStyle = "white";
-	  this.ctx.fill();
-	  this.ctx.closePath();
+	  // this.ctx.beginPath();
+	  // this.ctx.rect(this.x, this.y, this.width, this.height);
+	  // this.ctx.fillStyle = "white";
+	  // this.ctx.fill();
+	  // this.ctx.closePath();
+	  var plane = new Image();
+	  plane.src = this.sprite;
+	  this.ctx.drawImage(plane, this.x - 10, this.y, this.imageWidth, this.imageHeight);
 
 	  return this;
 	};
 
 	EnemyPlane.prototype.movement = function () {
-	  if (this.x > this.canvasWidth - this.width || this.x < 0) {
-	    move = -move;
-	  }
-	  this.x += move;
+	  this.y += this.movementY / 3; // why divide?
+	  this.x += this.movementX;
 	  return this;
 	};
 
@@ -278,7 +528,7 @@
 	module.exports = EnemyPlane;
 
 /***/ },
-/* 2 */
+/* 5 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -290,20 +540,310 @@
 	  this.height = height;
 	  this.color = "red";
 	  this.ctx = ctx;
+	  this.type = 0;
 	}
+
+	EnemyMissile.prototype.checkForMissileType = function () {
+	  this.drawMissile();
+	};
 
 	EnemyMissile.prototype.drawMissile = function () {
 	  this.ctx.fillStyle = this.color;
-	  this.ctx.fillRect(this.x, this.y, this.width, this.height);
+	  this.ctx.fillRect(this.x + 10, this.y + 20, this.width, this.height);
 	  return this;
 	};
 
 	EnemyMissile.prototype.launch = function () {
-	  this.y += 5;
+	  this.y += 10;
 	  return this;
 	};
 
 	module.exports = EnemyMissile;
+
+/***/ },
+/* 6 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	function UserMissile(x, y, width, height, ctx, type) {
+	  this.x = x + 4;
+	  this.y = y;
+	  this.width = width;
+	  this.height = height;
+	  this.color = "red";
+	  this.ctx = ctx;
+	  this.type = type;
+	}
+
+	UserMissile.prototype.drawMissile = function () {
+	  this.ctx.fillStyle = this.color;
+	  this.ctx.fillRect(this.x, this.y, this.width, this.height);
+
+	  return this;
+	};
+
+	UserMissile.prototype.launch = function () {
+	  this.y -= 20;
+	  return this;
+	};
+
+	module.exports = UserMissile;
+
+/***/ },
+/* 7 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	function GameBoardMissileHelpers(userMissiles, enemyMissiles, shipX, shipY, canvasWidth, canvasHeight) {
+	  this.userMissiles = userMissiles;
+	  this.enemyMissiles = enemyMissiles;
+	  this.shipX = shipX;
+	  this.shipY = shipY;
+	  this.canvasWidth = canvasWidth;
+	  this.canvasHeight = canvasHeight;
+	}
+
+	GameBoardMissileHelpers.prototype.renderEnemyMissiles = function (enemyMissiles) {
+	  enemyMissiles.forEach(function (missile) {
+	    missile.drawMissile().launch();
+	  });
+	};
+
+	GameBoardMissileHelpers.prototype.renderUserMissiles = function (userMissiles) {
+	  userMissiles.forEach(function (missile) {
+	    missile.drawMissile().launch();
+	  });
+	};
+
+	module.exports = GameBoardMissileHelpers;
+
+/***/ },
+/* 8 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	function GameBoardScreenTextHelper(ctx, canvasWidth) {
+	  this.ctx = ctx;
+	  this.canvasWidth = canvasWidth;
+	}
+
+	GameBoardScreenTextHelper.prototype.levelScreen = function (levelNumber) {
+	  this.ctx.font = "20px 'Press Start 2P'";
+	  this.ctx.fillStyle = "#0095DD";
+	  var textString = "Starting Level " + levelNumber;
+	  this.addTextToScreen(textString, 400);
+	};
+
+	GameBoardScreenTextHelper.prototype.drawScore = function (score) {
+	  this.ctx.font = "16px 'Press Start 2P'";
+	  this.ctx.fillStyle = "#0095DD";
+	  this.ctx.fillText("Score: " + score, this.canvasWidth - 200, 20);
+	};
+
+	GameBoardScreenTextHelper.prototype.startScreen = function () {
+	  this.ctx.font = "20px 'Press Start 2P'";
+	  this.ctx.fillStyle = "#0095DD";
+	  var textString = "Press Enter to Play";
+	  this.addTextToScreen(textString, 400);
+	};
+
+	GameBoardScreenTextHelper.prototype.gameOverScreen = function (score) {
+	  this.ctx.font = "20px 'Press Start 2P'";
+	  this.ctx.fillStyle = "#0095DD";
+	  var textString = "See You Space Cowboy...";
+	  var textString2 = "End Score: " + score;
+	  var textString3 = "Press P to Play Again";
+
+	  this.addTextToScreen(textString, 300);
+	  this.addTextToScreen(textString2, 400);
+	  this.addTextToScreen(textString3, 500);
+	};
+
+	GameBoardScreenTextHelper.prototype.addTextToScreen = function (textString, y) {
+	  var textWidth = this.ctx.measureText(textString).width;
+	  this.ctx.fillText(textString, this.canvasWidth / 2 - textWidth / 2, y);
+	};
+
+	module.exports = GameBoardScreenTextHelper;
+
+/***/ },
+/* 9 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var Explosion = __webpack_require__(10);
+	var PowerUp = __webpack_require__(11);
+
+	function CollisionDetection(gameBoard) {
+	  this.gameBoard = gameBoard;
+	  this.explosion = new Explosion(gameBoard);
+	  this.enemyHit = false;
+	}
+
+	CollisionDetection.prototype.enemy = function () {
+	  this.gameBoard.enemyPlanes.forEach((function (plane) {
+	    this.gameBoard.userMissiles.forEach((function (missile) {
+	      if (missile.x >= plane.x && missile.x <= plane.x + plane.width && missile.y >= plane.y && missile.y <= plane.y + plane.height) {
+	        plane.health -= 10;
+	        this.gameBoard.userMissiles.pop(missile);
+	        this.gameBoard.score += 10;
+	        // this.explosion.explosionSequence(num);
+	        this.powerUpDrop(plane.x, plane.y);
+	      }
+	    }).bind(this));
+	  }).bind(this));
+	};
+
+	CollisionDetection.prototype.user = function () {
+	  this.gameBoard.enemyMissiles.forEach((function (missile) {
+	    for (var i = 0; i < 4; i++) {
+	      if (this.coordinateCheck(missile, 5, i)) {
+	        this.gameBoard.endGame = true;
+	      }
+	    }
+	  }).bind(this));
+	};
+
+	CollisionDetection.prototype.powerUpDrop = function (x, y) {
+	  if (Math.random() > 0.9) {
+	    this.gameBoard.powerUps.push(new PowerUp(x, y, this.gameBoard.ctx));
+	  }
+	};
+
+	CollisionDetection.prototype.userGetsPowerUp = function () {
+	  this.gameBoard.powerUps.forEach((function (powerUp) {
+	    for (var i = 0; i < 4; i++) {
+	      if (this.coordinateCheck(powerUp, 10, i)) {
+	        powerUp.redeemed = true;
+	        this.gameBoard.clearRedeemedPowerUp();
+	        this.gameBoard.playerPower++;
+	      }
+	    }
+	  }).bind(this));
+	};
+
+	CollisionDetection.prototype.coordinateCheck = function (object, size, i) {
+	  var powerUpCoordinates = [[object.x, object.y], [object.x + size, object.y], [object.x, object.y + size], [object.x + size, object.y + size]];
+	  return powerUpCoordinates[i][0] >= this.gameBoard.shipX && powerUpCoordinates[i][0] <= this.gameBoard.shipX + this.gameBoard.userPlaneWidth && powerUpCoordinates[i][1] >= this.gameBoard.shipY && powerUpCoordinates[i][1] <= this.gameBoard.shipY + this.gameBoard.userPlaneHeight;
+	};
+
+	module.exports = CollisionDetection;
+
+/***/ },
+/* 10 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	function Explosion(gameBoard) {
+	  this.gameBoard = gameBoard;
+	}
+
+	Explosion.prototype.explosionSequence = function (num) {
+	  // for(let i = 1; i < 109;i++){
+	  var explosion = new Image();
+	  explosion.src = './assets/explosions/explosion_' + num + '.png';
+	  this.gameBoard.ctx.drawImage(explosion, this.gameBoard.shipX - 5, this.gameBoard.shipY - 5, 40, 40);
+	};
+
+	module.exports = Explosion;
+
+/***/ },
+/* 11 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	function PowerUp(x, y, ctx) {
+	  // this.type   = type;
+	  this.x = x;
+	  this.y = y;
+	  this.width = 10;
+	  this.height = 10;
+	  this.ctx = ctx;
+	  this.redeemed = false;
+	}
+
+	PowerUp.prototype.draw = function () {
+	  this.ctx.beginPath();
+	  this.ctx.rect(this.x, this.y, this.width, this.height);
+	  this.ctx.fillStyle = "white";
+	  this.ctx.fill();
+	  this.ctx.closePath();
+	  return this;
+	};
+
+	PowerUp.prototype.moveDown = function () {
+	  this.y += 10;
+	};
+
+	module.exports = PowerUp;
+
+/***/ },
+/* 12 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	function MainGameLoop(gameBoard, canvas, ctx, keyController, collisionDetection) {
+	  this.gameBoard = gameBoard;
+	  this.canvas = canvas;
+	  this.ctx = ctx;
+	  this.keyController = keyController;
+	  this.collisionDetection = collisionDetection;
+	  this.y = -200;
+	  this.y2 = -(1000 + 200);
+	}
+
+	function renderImage(string) {
+	  var myImage = new Image();
+	  myImage.src = string;
+	  return myImage;
+	}
+
+	MainGameLoop.prototype.move = function () {
+	  this.y += 5;
+	  this.y2 += 5;
+	};
+
+	MainGameLoop.prototype.renderBackground = function () {
+	  if (this.y === this.gameBoard.canvasHeight) {
+	    this.y = -1200;
+	  }
+	  if (this.y2 === this.gameBoard.canvasHeight) {
+	    this.y2 = -1200;
+	  }
+	  this.ctx.drawImage(renderImage('./nebula-space.jpg'), 0, this.y);
+	  this.ctx.drawImage(renderImage('./nebula-space.jpg'), 0, this.y2);
+	  this.move();
+	};
+
+	MainGameLoop.prototype.loop = function () {
+	  this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+	  this.renderBackground();
+
+	  if (this.gameBoard.startGame !== true) {
+	    this.gameBoard.textHelpers.startScreen();
+	  }
+	  if (this.gameBoard.endGame === true) {
+	    this.gameBoard.textHelpers.gameOverScreen(this.gameBoard.score);
+	  }
+	  if (this.gameBoard.startGame && !this.gameBoard.endGame) {
+	    this.gameBoard.setup();
+	    this.keyController.userMovement();
+	    this.keyController.userShipPosition();
+	    this.collisionDetection.user();
+	    this.collisionDetection.enemy();
+	    this.collisionDetection.userGetsPowerUp();
+	    this.gameBoard.clearDestroyedPlanes();
+	  }
+	};
+
+	module.exports = MainGameLoop;
 
 /***/ }
 /******/ ]);
